@@ -12,18 +12,20 @@
     "playfair-display-semibold": "assets/PlayfairDisplay-SemiBold.ttf"
   },
   "color_schemes": {
-    "Zeronoise": {
-      "primary": "2d2a3d", // Applies as solid color to Post Titles and to other text as a tint
-      "secondary": "f4f4f9", // Applies to the background and .nav-pills>li a.active
-      "tertiary": "4f31cd", // Call to actions and links
-      "quaternary": "ffffff", // You can see it in the top menu
-      "header_background": "000000",
-      "header_primary": "ffffff", // It's the text and icons color in the header
-      "highlight": "8a51e7", // Applies to the title of the list of Time Periods in the "Top" tab of the main menu.
-      "danger": "ed2f2f",
-      "success": "14ba60",
-      "love": "fe5c5c"
-    }
+"Zeronoise": {
+  "primary": "1F1F1F",
+  "secondary": "f4f4f9",
+  "tertiary": "5057F6",
+  "quaternary": "ffffff",
+  "header_background": "5057F6",
+  "header_primary": "ffffff",
+  "selected": "d1f0ff",
+  "hover": "F0F0F0",
+  "highlight": "5057F6",
+  "danger": "FF2D46",
+  "success": "63DE77",
+  "love": "FF2D46"
+}
   },
   "modifiers": {},
   "learn_more": "https://meta.discourse.org/t/beginners-guide-to-using-discourse-themes/91966"
