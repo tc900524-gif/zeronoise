@@ -1,0 +1,171 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: white;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 1200px;
+    max-height: 800px;
+}
+
+#gameCanvas {
+    border: 2px solid #333;
+    background: #2c3e50;
+    display: block;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    border: 1px solid #444;
+    z-index: 100;
+    min-width: 300px;
+}
+
+.menu h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    color: #e74c3c;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.menu h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #f39c12;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.game-btn {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    border: none;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.game-btn:hover {
+    background: linear-gradient(45deg, #c0392b, #a93226);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.game-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.instructions {
+    text-align: left;
+    margin: 20px 0;
+    line-height: 1.6;
+}
+
+.instructions p {
+    margin-bottom: 8px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.game-ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.ui-panel {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #444;
+    backdrop-filter: blur(5px);
+}
+
+.ui-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.health-bar {
+    width: 100px;
+    height: 20px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.health-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    transition: width 0.3s ease;
+    border-radius: 9px;
+}
+
+.health-fill.low {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.health-fill.medium {
+    background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+@media (max-width: 768px) {
+    .menu {
+        width: 90vw;
+        padding: 20px;
+    }
+    
+    .menu h1 {
+        font-size: 2em;
+    }
+    
+    .ui-panel {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .ui-item {
+        justify-content: space-between;
+        width: 100%;
+    }
+}
