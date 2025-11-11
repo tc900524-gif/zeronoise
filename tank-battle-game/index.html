@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坦克大战</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameMenu" class="menu">
+            <h1>坦克大战</h1>
+            <button id="startBtn" class="game-btn">开始游戏</button>
+            <button id="instructionsBtn" class="game-btn">游戏说明</button>
+        </div>
+        
+        <div id="gameInstructions" class="menu hidden">
+            <h2>游戏说明</h2>
+            <div class="instructions">
+                <p><strong>控制方式：</strong></p>
+                <p>• WASD - 移动坦克</p>
+                <p>• 鼠标 - 瞄准方向</p>
+                <p>• 鼠标左键 - 射击</p>
+                <p>• 空格 - 暂停游戏</p>
+                <br>
+                <p><strong>游戏目标：</strong></p>
+                <p>• 击败所有敌坦克</p>
+                <p>• 避免被敌人击中</p>
+                <p>• 获得最高分数</p>
+            </div>
+            <button id="backBtn" class="game-btn">返回</button>
+        </div>
+        
+        <div id="gameUI" class="game-ui hidden">
+            <div class="ui-panel">
+                <div class="ui-item">
+                    <span>生命值：</span>
+                    <div class="health-bar">
+                        <div id="healthFill" class="health-fill"></div>
+                    </div>
+                </div>
+                <div class="ui-item">
+                    <span>得分：</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="ui-item">
+                    <span>关卡：</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="ui-item">
+                    <span>敌人数：</span>
+                    <span id="enemiesLeft">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="gameOver" class="menu hidden">
+            <h2>游戏结束</h2>
+            <p>最终得分：<span id="finalScore">0</span></p>
+            <button id="restartBtn" class="game-btn">重新开始</button>
+            <button id="menuBtn" class="game-btn">返回菜单</button>
+        </div>
+        
+        <div id="pauseMenu" class="menu hidden">
+            <h2>游戏暂停</h2>
+            <button id="resumeBtn" class="game-btn">继续游戏</button>
+            <button id="restartBtn2" class="game-btn">重新开始</button>
+            <button id="menuBtn2" class="game-btn">返回菜单</button>
+        </div>
+    </div>
+    
+    <script src="js/classes.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
