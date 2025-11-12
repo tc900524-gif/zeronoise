@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>植物养成游戏</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2E7D32;
+            margin-bottom: 30px;
+        }
+        
+        .audio-controls {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .audio-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .plant-section {
+            flex: 1;
+            min-width: 300px;
+            background: linear-gradient(to bottom, #C8E6C9, #A5D6A7);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-section {
+            flex: 1;
+            min-width: 300px;
+            background: linear-gradient(to bottom, #FFF9C4, #FFF59D);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .plant-display {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .soil {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: #5D4037;
+        }
+        
+        .plant {
+            position: relative;
+            z-index: 2;
+            transition: all 0.5s ease;
+        }
+        
+        .seed {
+            width: 20px;
+            height: 20px;
+            background-color: #8D6E63;
+            border-radius: 50%;
+        }
+        
+        .sprout {
+            width: 8px;
+            height: 40px;
+            background-color: #4CAF50;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .plant-stage-1 .sprout::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -10px;
+            width: 30px;
+            height: 20px;
+            background-color: #8BC34A;
+            border-radius: 50%;
+        }
+        
+        .plant-stage-2 .sprout {
+            height: 60px;
+        }
+        
+        .plant-stage-2 .sprout::after {
+            top: -20px;
+            left: -15px;
+            width: 40px;
+            height: 30px;
+        }
+        
+        .plant-stage-3 .sprout {
+            height: 80px;
+        }
+        
+        .plant-stage-3 .sprout::after {
+            top: -30px;
+            left: -20px;
+            width: 50px;
+            height: 40px;
+        }
+        
+        .plant-stage-4 .sprout {
+            height: 100px;
+        }
+        
+        .plant-stage-4 .sprout::after {
+            top: -40px;
+            left: -25px;
+            width: 60px;
+            height: 50px;
+        }
+        
+        .flower-bud {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background-color: #F44336;
+            border-radius: 50%;
+            z-index: 3;
+        }
+        
+        .blooming-flower {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            z-index: 3;
+        }
+        
+        .flower-petal {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #E91E63;
+            border-radius: 50%;
+        }
+        
+        .flower-petal:nth-child(1) { top: 0; left: 10px; }
+        .flower-petal:nth-child(2) { top: 10px; right: 0; }
+        .flower-petal:nth-child(3) { bottom: 0; left: 10px; }
+        .flower-petal:nth-child(4) { top: 10px; left: 0; }
+        .flower-center {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #FFEB3B;
+            border-radius: 50%;
+            z-index: 4;
+        }
+        
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn {
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .water-btn {
+            background: linear-gradient(to bottom, #2196F3, #0D47A1);
+            color: white;
+        }
+        
+        .fertilize-btn {
+            background: linear-gradient(to bottom, #795548, #4E342E);
+            color: white;
+        }
+        
+        .weed-btn {
+            background: linear-gradient(to bottom, #8BC34A, #4CAF50);
+            color: white;
+        }
+        
+        .pest-btn {
+            background: linear-gradient(to bottom, #FF9800, #EF6C00);
+            color: white;
+        }
+        
+        .harvest-btn {
+            background: linear-gradient(to bottom, #FF5722, #D84315);
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .sell-btn {
+            background: linear-gradient(to bottom, #9C27B0, #6A1B9A);
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2E7D32;
+        }
+        
+        .progress-container {
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #E0E0E0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            border-radius: 5px;
+        }
+        
+        .message-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #E3F2FD;
+            border-radius: 8px;
+            min-height: 60px;
+        }
+        
+        .message {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .info-message {
+            background-color: #BBDEFB;
+        }
+        
+        .success-message {
+            background-color: #C8E6C9;
+        }
+        
+        .warning-message {
+            background-color: #FFF9C4;
+        }
+        
+        .error-message {
+            background-color: #FFCDD2;
+        }
+        
+        .achievements-section {
+            margin-top: 20px;
+            background: linear-gradient(to bottom, #F3E5F5, #E1BEE7);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .achievement {
+            background-color: white;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            opacity: 0.6;
+        }
+        
+        .achievement.unlocked {
+            opacity: 1;
+            background: linear-gradient(to bottom, #FFEB3B, #FFC107);
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 植物养成游戏 🌸</h1>
+        
+        <div class="audio-controls">
+            <button class="audio-btn" id="bgm-btn">🎵 背景音乐</button>
+            <button class="audio-btn" id="sfx-btn">🔊 音效</button>
+        </div>
+        
+        <div class="game-area">
+            <div class="plant-section">
+                <h2>我的植物</h2>
+                <div class="plant-display">
+                    <div class="soil"></div>
+                    <div class="plant" id="plant">
+                        <div class="seed"></div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="action-btn water-btn" id="water-btn">💧 浇水</button>
+                    <button class="action-btn fertilize-btn" id="fertilize-btn">💩 施肥</button>
+                    <button class="action-btn weed-btn" id="weed-btn">🌿 除草</button>
+                    <button class="action-btn pest-btn" id="pest-btn">🐛 除虫</button>
+                    <button class="action-btn harvest-btn" id="harvest-btn" disabled>⛏️ 收获</button>
+                    <button class="action-btn sell-btn" id="sell-btn" disabled>💰 出售</button>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h2>植物状态</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>成长阶段</div>
+                        <div class="stat-value" id="growth-stage">种子</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div>健康值</div>
+                        <div class="stat-value" id="health-value">100</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="health-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div>水分</div>
+                        <div class="stat-value" id="water-value">50</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="water-bar" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div>营养</div>
+                        <div class="stat-value" id="nutrition-value">50</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="nutrition-bar" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div>金币</div>
+                        <div class="stat-value" id="coins-value">100</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div>经验值</div>
+                        <div class="stat-value" id="exp-value">0</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="exp-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-area">
+                    <div class="message info-message">🌱 欢迎来到植物养成游戏！请给你的种子浇水开始培育。</div>
+                </div>
+                
+                <div class="achievements-section">
+                    <h3>🏆 成就系统</h3>
+                    <div class="achievements-grid" id="achievements-grid">
+                        <!-- 成就将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        const gameState = {
+            stage: 0, // 0: 种子, 1: 发芽, 2: 生长, 3: 开花, 4: 结果
+            health: 100,
+            water: 50,
+            nutrition: 50,
+            coins: 100,
+            exp: 0,
+            weeds: 0,
+            pests: 0,
+            weedsRemoved: 0,  // 用于成就系统
+            pestsCleared: 0,  // 用于成就系统
+            lastAction: null,
+            lastActionTime: Date.now(),
+            growthThresholds: [0, 30, 60, 90, 120], // 成长阶段经验值阈值
+            messages: []
+        };
+        
+        // DOM元素
+        const elements = {
+            plant: document.getElementById('plant'),
+            growthStage: document.getElementById('growth-stage'),
+            healthValue: document.getElementById('health-value'),
+            healthBar: document.getElementById('health-bar'),
+            waterValue: document.getElementById('water-value'),
+            waterBar: document.getElementById('water-bar'),
+            nutritionValue: document.getElementById('nutrition-value'),
+            nutritionBar: document.getElementById('nutrition-bar'),
+            coinsValue: document.getElementById('coins-value'),
+            expValue: document.getElementById('exp-value'),
+            expBar: document.getElementById('exp-bar'),
+            messageArea: document.querySelector('.message-area'),
+            waterBtn: document.getElementById('water-btn'),
+            fertilizeBtn: document.getElementById('fertilize-btn'),
+            weedBtn: document.getElementById('weed-btn'),
+            pestBtn: document.getElementById('pest-btn'),
+            harvestBtn: document.getElementById('harvest-btn'),
+            sellBtn: document.getElementById('sell-btn')
+        };
+        
+        // 初始化游戏
+        function initGame() {
+            updateUI();
+            setupEventListeners();
+            
+            // 每秒更新一次游戏状态
+            setInterval(updateGameState, 1000);
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            elements.waterBtn.addEventListener('click', () => performAction('water'));
+            elements.fertilizeBtn.addEventListener('click', () => performAction('fertilize'));
+            elements.weedBtn.addEventListener('click', () => performAction('weed'));
+            elements.pestBtn.addEventListener('click', () => performAction('pest'));
+            elements.harvestBtn.addEventListener('click', () => performAction('harvest'));
+            elements.sellBtn.addEventListener('click', () => performAction('sell'));
+        }
+        
+        // 执行操作
+        function performAction(action) {
+            const now = Date.now();
+            const timeDiff = now - gameState.lastActionTime;
+            
+            // 限制操作频率（至少间隔1秒）
+            if (timeDiff < 1000) {
+                addMessage('操作太频繁了，请稍后再试！', 'warning-message');
+                return;
+            }
+            
+            gameState.lastAction = action;
+            gameState.lastActionTime = now;
+            
+            switch (action) {
+                case 'water':
+                    waterPlant();
+                    break;
+                case 'fertilize':
+                    fertilizePlant();
+                    break;
+                case 'weed':
+                    removeWeeds();
+                    break;
+                case 'pest':
+                    removePests();
+                    break;
+                case 'harvest':
+                    harvestPlant();
+                    break;
+                case 'sell':
+                    sellPlant();
+                    break;
+            }
+            
+            updateUI();
+        }
+        
+        // 浇水
+        function waterPlant() {
+            if (gameState.water >= 100) {
+                addMessage('水分已经很充足了，不需要再浇水了！', 'warning-message');
+                return;
+            }
+            
+            gameState.water = Math.min(100, gameState.water + 15);
+            gameState.exp += 2;
+            addMessage('💧 给植物浇水了，水分增加！', 'info-message');
+            
+            // 有一定几率减少杂草
+            if (Math.random() < 0.3 && gameState.weeds > 0) {
+                gameState.weeds--;
+                addMessage('🌿 浇水冲走了一些杂草！', 'success-message');
+            }
+        }
+        
+        // 施肥
+        function fertilizePlant() {
+            if (gameState.coins < 10) {
+                addMessage('💰 金币不足，无法购买肥料！', 'error-message');
+                return;
+            }
+            
+            if (gameState.nutrition >= 100) {
+                addMessage('营养已经很充足了，不需要再施肥了！', 'warning-message');
+                return;
+            }
+            
+            gameState.coins -= 10;
+            gameState.nutrition = Math.min(100, gameState.nutrition + 20);
+            gameState.exp += 5;
+            addMessage('💩 给植物施肥了，营养增加！', 'info-message');
+            
+            // 有一定几率减少害虫
+            if (Math.random() < 0.4 && gameState.pests > 0) {
+                gameState.pests--;
+                addMessage('🐛 施肥驱赶了一些害虫！', 'success-message');
+            }
+        }
+        
+        // 除草
+        function removeWeeds() {
+            if (gameState.weeds <= 0) {
+                addMessage('🌱 没有杂草需要清理！', 'info-message');
+                return;
+            }
+            
+            gameState.weeds = 0;
+            gameState.health = Math.min(100, gameState.health + 10);
+            gameState.exp += 3;
+            gameState.weedsRemoved += 1; // 为成就系统计数
+            addMessage('🌿 成功清理了杂草，植物更健康了！', 'success-message');
+        }
+        
+        // 除虫
+        function removePests() {
+            if (gameState.pests <= 0) {
+                addMessage('🐛 没有害虫需要清理！', 'info-message');
+                return;
+            }
+            
+            if (gameState.coins < 5) {
+                addMessage('💰 金币不足，无法购买杀虫剂！', 'error-message');
+                return;
+            }
+            
+            gameState.coins -= 5;
+            gameState.pests = 0;
+            gameState.health = Math.min(100, gameState.health + 15);
+            gameState.exp += 4;
+            gameState.pestsCleared += 1; // 为成就系统计数
+            addMessage('🐛 成功清理了害虫，植物更健康了！', 'success-message');
+        }
+        
+        // 收获
+        function harvestPlant() {
+            if (gameState.stage < 4) {
+                addMessage('🌱 植物还未成熟，无法收获！', 'warning-message');
+                return;
+            }
+            
+            gameState.stage = 0; // 重置为种子
+            gameState.exp += 20;
+            addMessage('⛏️ 成功收获了植物！', 'success-message');
+            elements.harvestBtn.disabled = true;
+            elements.sellBtn.disabled = false;
+        }
+        
+        // 出售
+        function sellPlant() {
+            if (gameState.stage > 0) {
+                addMessage('🌱 请先收获植物才能出售！', 'warning-message');
+                return;
+            }
+            
+            const sellValue = 50 + Math.floor(Math.random() * 50); // 随机售价50-100金币
+            gameState.coins += sellValue;
+            gameState.exp += 10;
+            addMessage(`💰 成功出售植物，获得 ${sellValue} 金币！`, 'success-message');
+            elements.sellBtn.disabled = true;
+            
+            // 重新开始种植
+            setTimeout(() => {
+                addMessage('🌱 可以开始种植新的植物了！', 'info-message');
+            }, 2000);
+        }
+        
+        // 更新游戏状态
+        function updateGameState() {
+            const now = Date.now();
+            const timeDiff = now - gameState.lastActionTime;
+            
+            // 自然消耗（每10秒）
+            if (timeDiff > 10000) {
+                gameState.water = Math.max(0, gameState.water - 2);
+                gameState.nutrition = Math.max(0, gameState.nutrition - 1);
+                
+                // 如果水分或营养不足，健康值下降
+                if (gameState.water < 20 || gameState.nutrition < 20) {
+                    gameState.health = Math.max(0, gameState.health - 1);
+                    if (gameState.health <= 30) {
+                        addMessage('⚠️ 植物健康状况不佳，请及时照料！', 'error-message');
+                    }
+                }
+                
+                // 随机生成杂草和害虫
+                if (Math.random() < 0.1 && gameState.weeds < 5) {
+                    gameState.weeds++;
+                    addMessage('🌱 有新的杂草长出来了！', 'warning-message');
+                }
+                
+                if (Math.random() < 0.05 && gameState.pests < 3) {
+                    gameState.pests++;
+                    addMessage('🐛 植物生了虫子，请及时处理！', 'error-message');
+                }
+                
+                // 如果有杂草或害虫，健康值下降
+                if (gameState.weeds > 0 || gameState.pests > 0) {
+                    gameState.health = Math.max(0, gameState.health - 0.5);
+                }
+                
+                gameState.lastActionTime = now;
+            }
+            
+            // 检查成长阶段
+            checkGrowthStage();
+            
+            // 检查成就
+            checkAchievements();
+            
+            // 检查植物是否死亡
+            if (gameState.health <= 0) {
+                addMessage('💀 植物枯死了！请重新开始种植。', 'error-message');
+                resetPlant();
+            }
+            
+            updateUI();
+        }
+        
+        // 检查成长阶段
+        function checkGrowthStage() {
+            const prevStage = gameState.stage;
+            
+            if (gameState.exp >= gameState.growthThresholds[4] && gameState.stage < 4) {
+                gameState.stage = 4;
+                addMessage('🌸 植物开花了！可以收获了！', 'success-message');
+                elements.harvestBtn.disabled = false;
+            } else if (gameState.exp >= gameState.growthThresholds[3] && gameState.stage < 3) {
+                gameState.stage = 3;
+                addMessage('🌱 植物长出了花苞！', 'info-message');
+            } else if (gameState.exp >= gameState.growthThresholds[2] && gameState.stage < 2) {
+                gameState.stage = 2;
+                addMessage('🌱 植物茁壮成长中！', 'info-message');
+            } else if (gameState.exp >= gameState.growthThresholds[1] && gameState.stage < 1) {
+                gameState.stage = 1;
+                addMessage('🌱 种子发芽了！', 'success-message');
+            }
+            
+            // 如果阶段发生变化，更新植物显示
+            if (prevStage !== gameState.stage) {
+                updatePlantDisplay();
+            }
+        }
+        
+        // 重置植物
+        function resetPlant() {
+            gameState.stage = 0;
+            gameState.health = 100;
+            gameState.water = 50;
+            gameState.nutrition = 50;
+            gameState.exp = 0;
+            gameState.weeds = 0;
+            gameState.pests = 0;
+            elements.harvestBtn.disabled = true;
+            elements.sellBtn.disabled = true;
+            updatePlantDisplay();
+        }
+        
+        // 更新植物显示
+        function updatePlantDisplay() {
+            const plant = elements.plant;
+            plant.innerHTML = '';
+            
+            switch (gameState.stage) {
+                case 0: // 种子
+                    plant.innerHTML = '<div class="seed"></div>';
+                    break;
+                case 1: // 发芽
+                    plant.innerHTML = '<div class="sprout"></div>';
+                    plant.className = 'plant plant-stage-1';
+                    break;
+                case 2: // 生长
+                    plant.innerHTML = '<div class="sprout"></div>';
+                    plant.className = 'plant plant-stage-2';
+                    break;
+                case 3: // 开花
+                    plant.innerHTML = '<div class="sprout"></div><div class="flower-bud"></div>';
+                    plant.className = 'plant plant-stage-3';
+                    break;
+                case 4: // 结果/开花
+                    plant.innerHTML = `
+                        <div class="sprout"></div>
+                        <div class="blooming-flower">
+                            <div class="flower-petal"></div>
+                            <div class="flower-petal"></div>
+                            <div class="flower-petal"></div>
+                            <div class="flower-petal"></div>
+                            <div class="flower-center"></div>
+                        </div>
+                    `;
+                    plant.className = 'plant plant-stage-4';
+                    break;
+            }
+        }
+        
+        // 更新UI
+        function updateUI() {
+            // 更新状态值
+            elements.growthStage.textContent = getGrowthStageText();
+            elements.healthValue.textContent = Math.floor(gameState.health);
+            elements.waterValue.textContent = Math.floor(gameState.water);
+            elements.nutritionValue.textContent = Math.floor(gameState.nutrition);
+            elements.coinsValue.textContent = gameState.coins;
+            elements.expValue.textContent = gameState.exp;
+            
+            // 更新进度条
+            elements.healthBar.style.width = gameState.health + '%';
+            elements.waterBar.style.width = gameState.water + '%';
+            elements.nutritionBar.style.width = gameState.nutrition + '%';
+            const expPercent = Math.min(100, (gameState.exp / gameState.growthThresholds[4]) * 100);
+            elements.expBar.style.width = expPercent + '%';
+            
+            // 更新植物显示
+            updatePlantDisplay();
+        }
+        
+        // 获取成长阶段文本
+        function getGrowthStageText() {
+            switch (gameState.stage) {
+                case 0: return '种子';
+                case 1: return '发芽';
+                case 2: return '生长';
+                case 3: return '开花';
+                case 4: return '盛开';
+                default: return '未知';
+            }
+        }
+        
+        // 添加消息
+        function addMessage(text, className) {
+            const message = document.createElement('div');
+            message.className = `message ${className}`;
+            message.textContent = text;
+            elements.messageArea.appendChild(message);
+            
+            // 限制消息数量
+            if (elements.messageArea.children.length > 5) {
+                elements.messageArea.removeChild(elements.messageArea.firstChild);
+            }
+            
+            // 滚动到底部
+            elements.messageArea.scrollTop = elements.messageArea.scrollHeight;
+        }
+        
+        // 音效系统
+        const audioSystem = {
+            bgmEnabled: true,
+            sfxEnabled: true,
+            bgmAudio: null,
+            
+            init() {
+                // 创建背景音乐音频对象
+                this.bgmAudio = new Audio();
+                this.bgmAudio.src = 'data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+                this.bgmAudio.loop = true;
+                
+                // 音效按钮事件
+                document.getElementById('bgm-btn').addEventListener('click', () => {
+                    this.bgmEnabled = !this.bgmEnabled;
+                    if (this.bgmEnabled) {
+                        this.bgmAudio.play().catch(e => console.log('BGM playback failed:', e));
+                    } else {
+                        this.bgmAudio.pause();
+                    }
+                    document.getElementById('bgm-btn').textContent = this.bgmEnabled ? '🎵 背景音乐' : '🔇 背景静音';
+                });
+                
+                document.getElementById('sfx-btn').addEventListener('click', () => {
+                    this.sfxEnabled = !this.sfxEnabled;
+                    document.getElementById('sfx-btn').textContent = this.sfxEnabled ? '🔊 音效' : '🔇 音效静音';
+                });
+            },
+            
+            playSfx() {
+                if (!this.sfxEnabled) return;
+                
+                // 创建一个简单的声音效果
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 440 + Math.random() * 440;
+                gainNode.gain.value = 0.1;
+                
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.3);
+                
+                setTimeout(() => {
+                    oscillator.stop();
+                }, 300);
+            }
+        };
+        
+        // 成就系统
+        const achievements = [
+            { id: 'first_water', name: '第一次浇水', description: '给植物浇第一次水', condition: (state) => state.water > 50 },
+            { id: 'first_fertilize', name: '第一次施肥', description: '给植物施第一次肥', condition: (state) => state.nutrition > 50 },
+            { id: 'first_growth', name: '发芽了！', description: '让植物从种子发芽', condition: (state) => state.stage >= 1 },
+            { id: 'flower_power', name: '花开富贵', description: '让植物开花', condition: (state) => state.stage >= 4 },
+            { id: 'pest_destroyer', name: '除虫专家', description: '清理10次害虫', condition: (state) => state.pestsCleared >= 10 },
+            { id: 'weed_cleaner', name: '除草能手', description: '清理20次杂草', condition: (state) => state.weedsRemoved >= 20 },
+            { id: 'rich_farmer', name: '富农', description: '拥有500金币', condition: (state) => state.coins >= 500 },
+            { id: 'plant_master', name: '植物大师', description: '达到500经验值', condition: (state) => state.exp >= 500 }
+        ];
+        
+        let unlockedAchievements = [];
+        
+        // 检查成就
+        function checkAchievements() {
+            achievements.forEach(achievement => {
+                if (!unlockedAchievements.includes(achievement.id) && achievement.condition(gameState)) {
+                    unlockedAchievements.push(achievement.id);
+                    addMessage(`🏆 解锁成就: ${achievement.name} - ${achievement.description}!`, 'success-message');
+                    updateAchievementsDisplay();
+                    
+                    // 播放成就解锁音效
+                    audioSystem.playSfx();
+                }
+            });
+        }
+        
+        // 更新成就显示
+        function updateAchievementsDisplay() {
+            const achievementsGrid = document.getElementById('achievements-grid');
+            achievementsGrid.innerHTML = '';
+            
+            achievements.forEach(achievement => {
+                const achievementEl = document.createElement('div');
+                achievementEl.className = `achievement ${unlockedAchievements.includes(achievement.id) ? 'unlocked' : ''}`;
+                achievementEl.innerHTML = `
+                    <div><strong>${achievement.name}</strong></div>
+                    <div style="font-size: 12px;">${achievement.description}</div>
+                `;
+                achievementsGrid.appendChild(achievementEl);
+            });
+        }
+        
+        // 保存游戏
+        function saveGame() {
+            const saveData = {
+                gameState: gameState,
+                unlockedAchievements: unlockedAchievements,
+                lastSaved: Date.now()
+            };
+            
+            localStorage.setItem('plantGameSave', JSON.stringify(saveData));
+            addMessage('💾 游戏已保存！', 'success-message');
+        }
+        
+        // 加载游戏
+        function loadGame() {
+            const saveData = localStorage.getItem('plantGameSave');
+            if (saveData) {
+                try {
+                    const parsed = JSON.parse(saveData);
+                    gameState = parsed.gameState;
+                    unlockedAchievements = parsed.unlockedAchievements || [];
+                    
+                    // 更新时间，避免加载后立即减少数值
+                    gameState.lastActionTime = Date.now();
+                    
+                    updateUI();
+                    updateAchievementsDisplay();
+                    addMessage('💾 游戏已加载！', 'success-message');
+                    return true;
+                } catch (e) {
+                    console.error('加载游戏失败:', e);
+                    addMessage('⚠️ 读取存档失败！', 'error-message');
+                    return false;
+                }
+            }
+            return false;
+        }
+        
+        // 页面加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            audioSystem.init();
+            updateAchievementsDisplay();
+            
+            // 尝试加载游戏
+            if (!loadGame()) {
+                addMessage('🌱 新游戏开始！祝你种植愉快！', 'info-message');
+            }
+            
+            // 添加保存按钮
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = '💾 保存游戏';
+            saveBtn.className = 'action-btn';
+            saveBtn.style.gridColumn = 'span 3';
+            saveBtn.style.background = 'linear-gradient(to bottom, #607D8B, #455A64)';
+            saveBtn.style.color = 'white';
+            saveBtn.addEventListener('click', saveGame);
+            
+            document.querySelector('.actions').appendChild(saveBtn);
+            
+            // 定期自动保存
+            setInterval(() => {
+                if (gameState.exp > 0) { // 只有在游戏开始后才自动保存
+                    saveGame();
+                }
+            }, 300000); // 每5分钟自动保存一次
+        });
+    </script>
+</body>
+</html>
