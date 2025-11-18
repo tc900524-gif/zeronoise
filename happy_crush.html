@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>开心消消乐</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .game-container {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #ff6b6b;
+      margin-bottom: 15px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .score, .moves {
+      background: #4ecdc4;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 10px;
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-gap: 4px;
+      background-color: #8a817c;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 0 auto;
+      max-width: 400px;
+    }
+
+    .cell {
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      user-select: none;
+    }
+
+    .cell:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    .cell.selected {
+      transform: scale(0.9);
+      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8);
+      border: 2px solid #fff;
+    }
+
+    .cell.matched {
+      animation: matchedAnimation 0.5s ease;
+    }
+
+    @keyframes matchedAnimation {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+
+    button {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      margin: 0 5px;
+    }
+
+    button:hover {
+      background: #ff5252;
+      transform: scale(1.05);
+    }
+
+    .game-over {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      display: none;
+    }
+
+    .game-over-content {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .game-over h2 {
+      font-size: 2.5em;
+      color: #ff6b6b;
+      margin-bottom: 20px;
+    }
+
+    .game-over p {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    /* 每种糖果的样式 */
+    .candy-1 { background-color: #ff6b6b; } /* 红色 */
+    .candy-2 { background-color: #4ecdc4; } /* 青色 */
+    .candy-3 { background-color: #ffbe0b; } /* 黄色 */
+    .candy-4 { background-color: #fb5607; } /* 橙色 */
+    .candy-5 { background-color: #8338ec; } /* 紫色 */
+    .candy-6 { background-color: #3a86ff; } /* 蓝色 */
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>开心消消乐</h1>
+    <div class="game-info">
+      <div class="score">得分: <span id="score">0</span></div>
+      <div class="moves">步数: <span id="moves">0</span></div>
+    </div>
+    <div class="game-board" id="gameBoard"></div>
+    <div class="controls">
+      <button id="restartBtn">重新开始</button>
+      <button id="hintBtn">提示</button>
+    </div>
+  </div>
+
+  <div class="game-over" id="gameOver">
+    <div class="game-over-content">
+      <h2>游戏结束!</h2>
+      <p>最终得分: <span id="finalScore">0</span></p>
+      <button id="playAgainBtn">再玩一次</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 游戏配置
+      const BOARD_SIZE = 8;
+      const CANDY_TYPES = 6; // 糖果类型数量
+      const REQUIRED_SCORE = 1000; // 获胜所需分数
+      const MAX_MOVES = 30; // 最大步数
+
+      // 游戏状态
+      let board = [];
+      let score = 0;
+      let moves = 0;
+      let selectedCandy = null;
+      let isSwapping = false;
+
+      // DOM元素
+      const gameBoard = document.getElementById('gameBoard');
+      const scoreElement = document.getElementById('score');
+      const movesElement = document.getElementById('moves');
+      const restartBtn = document.getElementById('restartBtn');
+      const hintBtn = document.getElementById('hintBtn');
+      const gameOverElement = document.getElementById('gameOver');
+      const finalScoreElement = document.getElementById('finalScore');
+      const playAgainBtn = document.getElementById('playAgainBtn');
+
+      // 初始化游戏
+      function initGame() {
+        createBoard();
+        renderBoard();
+        score = 0;
+        moves = 0;
+        updateUI();
+        gameOverElement.style.display = 'none';
+      }
+
+      // 创建游戏板
+      function createBoard() {
+        board = [];
+        for (let row = 0; row < BOARD_SIZE; row++) {
+          board[row] = [];
+          for (let col = 0; col < BOARD_SIZE; col++) {
+            // 随机生成糖果
+            board[row][col] = Math.floor(Math.random() * CANDY_TYPES) + 1;
+          }
+        }
+        
+        // 确保初始状态没有匹配
+        while (findMatches().length > 0) {
+          for (const match of findMatches()) {
+            for (const pos of match) {
+              board[pos.row][pos.col] = Math.floor(Math.random() * CANDY_TYPES) + 1;
+            }
+          }
+        }
+      }
+
+      // 渲染游戏板
+      function renderBoard() {
+        gameBoard.innerHTML = '';
+        for (let row = 0; row < BOARD_SIZE; row++) {
+          for (let col = 0; col < BOARD_SIZE; col++) {
+            const cell = document.createElement('div');
+            cell.className = `cell candy-${board[row][col]}`;
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            
+            cell.addEventListener('click', () => handleCandyClick(row, col));
+            
+            gameBoard.appendChild(cell);
+          }
+        }
+      }
+
+      // 处理糖果点击
+      function handleCandyClick(row, col) {
+        if (isSwapping) return;
+
+        const clickedCandy = { row, col, element: document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`) };
+
+        if (!selectedCandy) {
+          // 第一次点击
+          selectedCandy = clickedCandy;
+          clickedCandy.element.classList.add('selected');
+        } else if (selectedCandy.row === row && selectedCandy.col === col) {
+          // 取消选择
+          selectedCandy.element.classList.remove('selected');
+          selectedCandy = null;
+        } else if (isAdjacent(selectedCandy.row, selectedCandy.col, row, col)) {
+          // 尝试交换
+          swapCandies(selectedCandy.row, selectedCandy.col, row, col);
+        } else {
+          // 选择新的糖果
+          document.querySelectorAll('.cell.selected').forEach(cell => {
+            cell.classList.remove('selected');
+          });
+          selectedCandy = clickedCandy;
+          clickedCandy.element.classList.add('selected');
+        }
+      }
+
+      // 检查两个位置是否相邻
+      function isAdjacent(row1, col1, row2, col2) {
+        const rowDiff = Math.abs(row1 - row2);
+        const colDiff = Math.abs(col1 - col2);
+        return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
+      }
+
+      // 交换糖果
+      function swapCandies(row1, col1, row2, col2) {
+        isSwapping = true;
+        
+        // 交换数组中的值
+        const temp = board[row1][col1];
+        board[row1][col1] = board[row2][col2];
+        board[row2][col2] = temp;
+
+        // 重新渲染
+        renderBoard();
+
+        // 检查是否形成匹配
+        const matches = findMatches();
+        if (matches.length > 0) {
+          // 有匹配，更新步数和处理匹配
+          moves++;
+          updateUI();
+          setTimeout(() => {
+            processMatches();
+          }, 300);
+        } else {
+          // 没有匹配，交换回来
+          const temp = board[row1][col1];
+          board[row1][col1] = board[row2][col2];
+          board[row2][col2] = temp;
+          renderBoard();
+          isSwapping = false;
+        }
+
+        // 取消选择
+        if (selectedCandy) {
+          selectedCandy.element.classList.remove('selected');
+          selectedCandy = null;
+        }
+      }
+
+      // 查找所有匹配的糖果
+      function findMatches() {
+        const matches = [];
+
+        // 检查行匹配
+        for (let row = 0; row < BOARD_SIZE; row++) {
+          let count = 1;
+          let currentCandy = board[row][0];
+          let matchStart = 0;
+
+          for (let col = 1; col < BOARD_SIZE; col++) {
+            if (board[row][col] === currentCandy) {
+              count++;
+            } else {
+              if (count >= 3) {
+                const match = [];
+                for (let i = matchStart; i < col; i++) {
+                  match.push({ row, col: i });
+                }
+                matches.push(match);
+              }
+              currentCandy = board[row][col];
+              count = 1;
+              matchStart = col;
+            }
+          }
+
+          if (count >= 3) {
+            const match = [];
+            for (let i = matchStart; i < BOARD_SIZE; i++) {
+              match.push({ row, col: i });
+            }
+            matches.push(match);
+          }
+        }
+
+        // 检查列匹配
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          let count = 1;
+          let currentCandy = board[0][col];
+          let matchStart = 0;
+
+          for (let row = 1; row < BOARD_SIZE; row++) {
+            if (board[row][col] === currentCandy) {
+              count++;
+            } else {
+              if (count >= 3) {
+                const match = [];
+                for (let i = matchStart; i < row; i++) {
+                  match.push({ row: i, col });
+                }
+                matches.push(match);
+              }
+              currentCandy = board[row][col];
+              count = 1;
+              matchStart = row;
+            }
+          }
+
+          if (count >= 3) {
+            const match = [];
+            for (let i = matchStart; i < BOARD_SIZE; i++) {
+              match.push({ row: i, col });
+            }
+            matches.push(match);
+          }
+        }
+
+        return matches;
+      }
+
+      // 处理匹配的糖果
+      function processMatches() {
+        const matches = findMatches();
+        
+        if (matches.length === 0) {
+          isSwapping = false;
+          return;
+        }
+
+        // 添加匹配动画
+        for (const match of matches) {
+          for (const pos of match) {
+            const cell = document.querySelector(`.cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+            if (cell) {
+              cell.classList.add('matched');
+            }
+          }
+        }
+
+        // 计算得分
+        let matchCount = 0;
+        for (const match of matches) {
+          matchCount += match.length;
+        }
+        score += matchCount * 10;
+
+        setTimeout(() => {
+          // 移除匹配的糖果
+          for (const match of matches) {
+            for (const pos of match) {
+              board[pos.row][pos.col] = 0; // 0 表示空位置
+            }
+          }
+
+          // 让糖果下落
+          applyGravity();
+
+          // 填充新的糖果
+          fillEmptySpaces();
+
+          // 重新渲染
+          renderBoard();
+
+          // 检查是否有新的匹配
+          setTimeout(() => {
+            if (findMatches().length > 0) {
+              processMatches(); // 连击处理
+            } else {
+              isSwapping = false;
+              updateUI();
+              
+              // 检查游戏结束条件
+              checkGameEnd();
+            }
+          }, 300);
+        }, 500);
+      }
+
+      // 重力效果 - 让糖果下落
+      function applyGravity() {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          let emptySpaces = 0;
+          
+          // 从底部开始向上处理
+          for (let row = BOARD_SIZE - 1; row >= 0; row--) {
+            if (board[row][col] === 0) {
+              emptySpaces++;
+            } else if (emptySpaces > 0) {
+              // 将糖果下移
+              board[row + emptySpaces][col] = board[row][col];
+              board[row][col] = 0;
+            }
+          }
+        }
+      }
+
+      // 填充空位置
+      function fillEmptySpaces() {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          for (let row = 0; row < BOARD_SIZE; row++) {
+            if (board[row][col] === 0) {
+              board[row][col] = Math.floor(Math.random() * CANDY_TYPES) + 1;
+            }
+          }
+        }
+      }
+
+      // 更新UI
+      function updateUI() {
+        scoreElement.textContent = score;
+        movesElement.textContent = moves;
+      }
+
+      // 检查游戏结束
+      function checkGameEnd() {
+        if (moves >= MAX_MOVES) {
+          endGame();
+        } else if (score >= REQUIRED_SCORE) {
+          // 超级奖励
+          score += 500;
+          scoreElement.textContent = score;
+          setTimeout(() => {
+            alert('恭喜您达成目标！获得额外500分奖励！');
+            endGame();
+          }, 100);
+        }
+      }
+
+      // 结束游戏
+      function endGame() {
+        finalScoreElement.textContent = score;
+        gameOverElement.style.display = 'flex';
+      }
+
+      // 提示功能
+      function provideHint() {
+        // 简单提示实现：找到一个可能的交换
+        for (let row = 0; row < BOARD_SIZE; row++) {
+          for (let col = 0; col < BOARD_SIZE; col++) {
+            // 尝试与右边交换
+            if (col < BOARD_SIZE - 1) {
+              // 临时交换
+              const temp = board[row][col];
+              board[row][col] = board[row][col + 1];
+              board[row][col + 1] = temp;
+
+              // 检查是否产生匹配
+              if (findMatches().length > 0) {
+                // 恢复交换
+                board[row][col + 1] = board[row][col];
+                board[row][col] = temp;
+                
+                // 高亮这两个糖果
+                const cell1 = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                const cell2 = document.querySelector(`.cell[data-row="${row}"][data-col="${col + 1}"]`);
+                
+                cell1.style.boxShadow = '0 0 15px #ffff00, 0 0 25px #ffff00';
+                cell2.style.boxShadow = '0 0 15px #ffff00, 0 0 25px #ffff00';
+                
+                setTimeout(() => {
+                  cell1.style.boxShadow = '';
+                  cell2.style.boxShadow = '';
+                }, 1000);
+                
+                return;
+              }
+              
+              // 恢复交换
+              board[row][col + 1] = board[row][col];
+              board[row][col] = temp;
+            }
+            
+            // 尝试与下面交换
+            if (row < BOARD_SIZE - 1) {
+              // 临时交换
+              const temp = board[row][col];
+              board[row][col] = board[row + 1][col];
+              board[row + 1][col] = temp;
+
+              // 检查是否产生匹配
+              if (findMatches().length > 0) {
+                // 恢复交换
+                board[row + 1][col] = board[row][col];
+                board[row][col] = temp;
+                
+                // 高亮这两个糖果
+                const cell1 = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                const cell2 = document.querySelector(`.cell[data-row="${row + 1}"][data-col="${col}"]`);
+                
+                cell1.style.boxShadow = '0 0 15px #ffff00, 0 0 25px #ffff00';
+                cell2.style.boxShadow = '0 0 15px #ffff00, 0 0 25px #ffff00';
+                
+                setTimeout(() => {
+                  cell1.style.boxShadow = '';
+                  cell2.style.boxShadow = '';
+                }, 1000);
+                
+                return;
+              }
+              
+              // 恢复交换
+              board[row + 1][col] = board[row][col];
+              board[row][col] = temp;
+            }
+          }
+        }
+      }
+
+      // 事件监听器
+      restartBtn.addEventListener('click', initGame);
+      hintBtn.addEventListener('click', provideHint);
+      playAgainBtn.addEventListener('click', initGame);
+
+      // 启动游戏
+      initGame();
+    });
+  </script>
+</body>
+</html>
