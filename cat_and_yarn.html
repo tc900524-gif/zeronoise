@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猫咪玩毛线团</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #87CEEB;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 500px;
+        }
+        
+        /* 猫咪身体 */
+        .cat {
+            position: absolute;
+            bottom: 100px;
+            left: 100px;
+            z-index: 10;
+        }
+        
+        .cat-body {
+            width: 120px;
+            height: 60px;
+            background: #FFA500;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .cat-head {
+            width: 80px;
+            height: 70px;
+            background: #FFA500;
+            border-radius: 50%;
+            position: absolute;
+            top: -40px;
+            left: 30px;
+        }
+        
+        .cat-ear {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid #FFA500;
+            position: absolute;
+            top: -15px;
+        }
+        
+        .cat-ear.left {
+            left: 15px;
+            transform: rotate(-20deg);
+        }
+        
+        .cat-ear.right {
+            right: 15px;
+            transform: rotate(20deg);
+        }
+        
+        .cat-eye {
+            width: 12px;
+            height: 12px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+        }
+        
+        .cat-eye.left {
+            left: 25px;
+        }
+        
+        .cat-eye.right {
+            right: 25px;
+        }
+        
+        .cat-nose {
+            width: 10px;
+            height: 8px;
+            background: #FF69B4;
+            border-radius: 50%;
+            position: absolute;
+            top: 35px;
+            left: 35px;
+        }
+        
+        .cat-mouth {
+            width: 20px;
+            height: 10px;
+            border-bottom: 2px solid #333;
+            border-radius: 0 0 50% 50%;
+            position: absolute;
+            top: 45px;
+            left: 30px;
+        }
+        
+        .cat-paw {
+            width: 20px;
+            height: 30px;
+            background: #FFA500;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -20px;
+        }
+        
+        .cat-paw.front-left {
+            left: 20px;
+        }
+        
+        .cat-paw.front-right {
+            right: 20px;
+        }
+        
+        .cat-paw.back-left {
+            left: 40px;
+            bottom: -25px;
+        }
+        
+        .cat-paw.back-right {
+            right: 40px;
+            bottom: -25px;
+        }
+        
+        /* 毛线团 */
+        .yarn {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #FF69B4;
+            border-radius: 50%;
+            bottom: 100px;
+            right: 200px;
+            z-index: 5;
+            box-shadow: 
+                inset -5px -5px 10px rgba(0,0,0,0.1),
+                0 0 10px rgba(0,0,0,0.2);
+        }
+        
+        .yarn-string {
+            position: absolute;
+            width: 8px;
+            height: 150px;
+            background: #FF69B4;
+            top: -150px;
+            left: 21px;
+            border-radius: 4px;
+            transform-origin: bottom center;
+        }
+        
+        /* 草地 */
+        .grass {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: #2E8B57;
+        }
+        
+        /* 动画 */
+        @keyframes catMove {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
+        
+        @keyframes yarnMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-30px, -20px) rotate(10deg); }
+            50% { transform: translate(0, -30px) rotate(20deg); }
+            75% { transform: translate(30px, -20px) rotate(10deg); }
+        }
+        
+        @keyframes yarnRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes catBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .cat {
+            animation: catMove 3s infinite ease-in-out;
+        }
+        
+        .yarn {
+            animation: 
+                yarnMove 4s infinite ease-in-out,
+                yarnRotate 6s infinite linear;
+        }
+        
+        .cat-body, .cat-head {
+            animation: catBounce 1s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cat">
+            <div class="cat-body">
+                <div class="cat-paw front-left"></div>
+                <div class="cat-paw front-right"></div>
+                <div class="cat-paw back-left"></div>
+                <div class="cat-paw back-right"></div>
+            </div>
+            <div class="cat-head">
+                <div class="cat-ear left"></div>
+                <div class="cat-ear right"></div>
+                <div class="cat-eye left"></div>
+                <div class="cat-eye right"></div>
+                <div class="cat-nose"></div>
+                <div class="cat-mouth"></div>
+            </div>
+        </div>
+        <div class="yarn">
+            <div class="yarn-string"></div>
+        </div>
+        <div class="grass"></div>
+    </div>
+    
+    <script>
+        // JavaScript动画增强
+        document.addEventListener('DOMContentLoaded', function() {
+            const cat = document.querySelector('.cat');
+            const yarn = document.querySelector('.yarn');
+            const catBody = document.querySelector('.cat-body');
+            const catHead = document.querySelector('.cat-head');
+            
+            // 添加随机的猫咪头部转动效果
+            setInterval(() => {
+                const randomRotation = Math.random() * 10 - 5; // -5到5度之间随机
+                catHead.style.transform = `rotate(${randomRotation}deg)`;
+            }, 2000);
+            
+            // 添加毛线团被拍打的效果
+            setInterval(() => {
+                yarn.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    yarn.style.transform = '';
+                }, 200);
+            }, 5000);
+            
+            // 添加猫咪拍打动作
+            function catSwipe() {
+                const paws = document.querySelectorAll('.cat-paw');
+                const randomPaw = paws[Math.floor(Math.random() * paws.length)];
+                
+                // 暂时修改猫爪的动画
+                randomPaw.style.transition = 'transform 0.3s';
+                randomPaw.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    randomPaw.style.transform = '';
+                }, 300);
+                
+                // 每隔几秒执行一次拍打动作
+                setTimeout(catSwipe, Math.random() * 3000 + 2000);
+            }
+            
+            // 开始拍打动作
+            setTimeout(catSwipe, 1000);
+            
+            // 添加点击毛线团的交互效果
+            yarn.addEventListener('click', function() {
+                // 毛线团飞出去的效果
+                yarn.style.transition = 'all 0.5s ease-out';
+                yarn.style.transform += ' translateX(-100px) rotate(360deg)';
+                
+                setTimeout(() => {
+                    yarn.style.transition = '';
+                    // 重置位置
+                    yarn.style.transform = '';
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
