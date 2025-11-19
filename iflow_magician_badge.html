@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFlow模法师</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .badge-container {
+            position: relative;
+            width: 300px;
+            height: 360px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 六边形盾牌背景 */
+        .shield {
+            position: absolute;
+            width: 260px;
+            height: 300px;
+            background: linear-gradient(135deg, #6A3093, #8E2DE2);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            box-shadow: 0 0 25px rgba(136, 0, 255, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 30px;
+        }
+
+        /* 中心角色 - 模法师 */
+        .magician {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .face {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .eyes {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            padding: 0 15px;
+        }
+
+        .eye {
+            width: 12px;
+            height: 12px;
+            background: #2196F3;
+            border-radius: 50%;
+        }
+
+        .mouth {
+            width: 30px;
+            height: 15px;
+            border-bottom: 3px solid #333;
+            border-radius: 0 0 50% 50%;
+            margin-top: 10px;
+        }
+
+        /* 魔术师帽子 */
+        .hat {
+            position: relative;
+            width: 70px;
+            height: 60px;
+            background: #4A148C;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            margin-bottom: -10px;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hat-brim {
+            position: absolute;
+            bottom: -8px;
+            width: 90px;
+            height: 10px;
+            background: #FF8F00;
+            border-radius: 50%;
+        }
+
+        /* 魔法棒 */
+        .wand {
+            position: absolute;
+            left: -50px;
+            top: 30px;
+            transform: rotate(-20deg);
+            z-index: 1;
+        }
+
+        .wand-stick {
+            width: 60px;
+            height: 4px;
+            background: #8B4513;
+            border-radius: 2px;
+        }
+
+        .wand-star {
+            position: absolute;
+            left: -8px;
+            top: -10px;
+            font-size: 24px;
+            color: #FFEB3B;
+            text-shadow: 0 0 10px #FFD700;
+            animation: twinkle 1.5s infinite alternate;
+        }
+
+        /* 大模型水晶球 */
+        .crystal-ball {
+            position: absolute;
+            right: -45px;
+            top: 40px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #00BCD4, #E91E63);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.7);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .crystal-content {
+            font-size: 14px;
+            color: white;
+            text-align: center;
+            transform: scale(0.8);
+        }
+
+        /* 清扫工具 */
+        .broom {
+            position: absolute;
+            right: -60px;
+            bottom: 20px;
+            transform: rotate(30deg);
+            font-size: 30px;
+            opacity: 0.7;
+        }
+
+        /* 实验工具 */
+        .beaker {
+            position: absolute;
+            left: -55px;
+            bottom: 20px;
+            transform: rotate(-30deg);
+            font-size: 30px;
+            opacity: 0.7;
+        }
+
+        /* 底部横幅 */
+        .banner {
+            position: absolute;
+            bottom: 20px;
+            width: 220px;
+            height: 40px;
+            background: linear-gradient(to right, #FFD700, #FFA000);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .banner-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #5D3FD3;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+
+        /* 动画效果 */
+        @keyframes twinkle {
+            0% { transform: scale(1); text-shadow: 0 0 10px #FFD700; }
+            100% { transform: scale(1.1); text-shadow: 0 0 20px #FFD700, 0 0 30px #FFA500; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 装饰星星 */
+        .star {
+            position: absolute;
+            font-size: 16px;
+            color: #FFEB3B;
+            text-shadow: 0 0 5px #FFD700;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        .star1 {
+            top: 20px;
+            left: 30px;
+        }
+
+        .star2 {
+            top: 20px;
+            right: 30px;
+        }
+
+        .star3 {
+            bottom: 80px;
+            left: 30px;
+        }
+
+        .star4 {
+            bottom: 80px;
+            right: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="badge-container">
+        <div class="shield">
+            <div class="star star1">✨</div>
+            <div class="star star2">✨</div>
+            <div class="star star3">✨</div>
+            <div class="star star4">✨</div>
+            
+            <div class="magician">
+                <!-- 魔法师帽子 -->
+                <div class="hat">
+                    <div class="hat-brim"></div>
+                </div>
+                
+                <!-- 魔法师脸部 -->
+                <div class="face">
+                    <div class="eyes">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                    </div>
+                    <div class="mouth"></div>
+                </div>
+            </div>
+            
+            <!-- 魔法棒 -->
+            <div class="wand">
+                <div class="wand-stick"></div>
+                <div class="wand-star">⭐</div>
+            </div>
+            
+            <!-- 大模型水晶球 -->
+            <div class="crystal-ball">
+                <div class="crystal-content">AI<br/>🔮</div>
+            </div>
+            
+            <!-- 清扫工具 -->
+            <div class="broom">🧹</div>
+            
+            <!-- 实验工具 -->
+            <div class="beaker">🧪</div>
+            
+            <!-- 底部横幅 -->
+            <div class="banner">
+                <div class="banner-text">iFlow模法师</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
