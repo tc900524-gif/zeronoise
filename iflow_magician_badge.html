@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iFlow模法师徽章</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .badge-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* 徽章外框 - 盾牌形状 */
+    .badge-frame {
+      position: relative;
+      width: 240px;
+      height: 280px;
+      background: linear-gradient(135deg, #b8860b, #ffd700);
+      border-radius: 20px;
+      padding: 15px;
+      box-sizing: border-box;
+      box-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.5),
+        0 0 40px rgba(106, 44, 147, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+    
+    /* 徽章内层背景 */
+    .badge-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #6a3093, #8a2be2);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* 魔法师角色 */
+    .magician-character {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 15px;
+      z-index: 3;
+    }
+    
+    .character-face {
+      width: 80px;
+      height: 80px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 5px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .magician-hat {
+      width: 70px;
+      height: 60px;
+      background: linear-gradient(to bottom, #5d3a9b, #3a1c71);
+      border-radius: 50% 50% 0 0;
+      position: relative;
+      margin-bottom: -15px;
+      z-index: 2;
+    }
+    
+    .hat-star {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: gold;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+    }
+    
+    /* 魔法元素 */
+    .magic-elements {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin: 10px 0;
+      z-index: 2;
+    }
+    
+    .magic-item {
+      font-size: 28px;
+      animation: float 3s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    }
+    
+    .magic-item:nth-child(1) { animation-delay: 0s; }
+    .magic-item:nth-child(2) { animation-delay: 0.5s; }
+    .magic-item:nth-child(3) { animation-delay: 1s; }
+    
+    /* 大模型水晶球 */
+    .ai-crystal-ball {
+      font-size: 40px;
+      margin: 10px 0;
+      animation: glow 2s ease-in-out infinite alternate;
+      text-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+      z-index: 2;
+    }
+    
+    /* 底部横幅 */
+    .badge-banner {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4b3621;
+      padding: 8px 20px;
+      border-radius: 20px;
+      z-index: 3;
+    }
+    
+    .badge-text {
+      color: #ffd700;
+      font-weight: bold;
+      font-size: 16px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      letter-spacing: 1px;
+    }
+    
+    /* 光效和装饰 */
+    .sparkle {
+      position: absolute;
+      font-size: 16px;
+      opacity: 0;
+      animation: sparkle 2s linear infinite;
+    }
+    
+    /* 动画效果 */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes glow {
+      from { text-shadow: 0 0 10px rgba(138, 43, 226, 0.8); }
+      to { text-shadow: 0 0 20px rgba(138, 43, 226, 1), 0 0 30px rgba(255, 215, 0, 0.8); }
+    }
+    
+    @keyframes sparkle {
+      0% { opacity: 0; transform: translateY(0) rotate(0deg); }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-50px) rotate(360deg); }
+    }
+    
+    /* 翅膀装饰 */
+    .wings {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+      box-sizing: border-box;
+      z-index: 1;
+    }
+    
+    .wing {
+      width: 40px;
+      height: 60px;
+      background: white;
+      border-radius: 50% 50% 0 0;
+      transform: rotateX(60deg);
+      opacity: 0.7;
+      filter: blur(1px);
+    }
+    
+    .wing-left {
+      transform: rotateX(60deg) rotateY(180deg);
+    }
+    
+    .wing-right {
+      transform: rotateX(60deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="badge-container">
+    <div class="wings">
+      <div class="wing wing-left"></div>
+      <div class="wing wing-right"></div>
+    </div>
+    
+    <div class="badge-frame">
+      <div class="badge-inner">
+        <div class="magician-character">
+          <div class="magician-hat">
+            <div class="hat-star">⭐</div>
+          </div>
+          <div class="character-face"></div>
+        </div>
+        
+        <div class="ai-crystal-ball">🔮</div>
+        
+        <div class="magic-elements">
+          <div class="magic-item">🧹</div>
+          <div class="magic-item">🪄</div>
+          <div class="magic-item">🧪</div>
+        </div>
+        
+        <div class="badge-banner">
+          <div class="badge-text">iFlow模法师</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
