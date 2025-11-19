@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>绿植监护小程序 - 完整版</title>
+  <link rel="stylesheet" href="plant-guardian-styles.css">
+  <style>
+    .instructions {
+      background: #e8f5e9;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+    
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .feature-card h3 {
+      color: #2e7d32;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container" style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+    <h1 style="text-align: center; color: #2e7d32; margin: 20px 0;">🌿 绿植监护小程序</h1>
+    
+    <div class="instructions">
+      <h2 style="color: #2e7d32; text-align: center;">功能特点</h2>
+      <div class="feature-list">
+        <div class="feature-card">
+          <h3>🌱 植物信息管理</h3>
+          <p>添加和管理您的植物，记录名称、种类和护理周期</p>
+        </div>
+        <div class="feature-card">
+          <h3>💧 智能浇水提醒</h3>
+          <p>根据设定的浇水周期自动提醒您照顾植物</p>
+        </div>
+        <div class="feature-card">
+          <h3>🌡️ 环境监测</h3>
+          <p>实时监测温度、湿度和光照强度</p>
+        </div>
+        <div class="feature-card">
+          <h3>💾 数据存储</h3>
+          <p>所有数据本地存储，无需联网即可使用</p>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <button id="startApp" class="btn-primary" style="padding: 15px 30px; font-size: 1.2rem;">启动绿植监护应用</button>
+    </div>
+    
+    <div id="appContainer">
+      <!-- 应用将在这里加载 -->
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('startApp').addEventListener('click', function() {
+      // 创建iframe加载应用
+      const iframe = document.createElement('iframe');
+      iframe.src = 'plant-guardian.html';
+      iframe.style.width = '100%';
+      iframe.style.height = '850px';
+      iframe.style.border = 'none';
+      iframe.style.borderRadius = '10px';
+      iframe.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+      
+      const container = document.getElementById('appContainer');
+      container.innerHTML = '';
+      container.appendChild(iframe);
+    });
+  </script>
+</body>
+</html>
