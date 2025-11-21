@@ -262,7 +262,8 @@ function processMatches(matches) {
     // 添加匹配动画
     matches.forEach(candy => {
         candy.element.classList.add('matched');
-        gameState.score += 10;
+        // 增加分数，匹配越多分数越高
+        gameState.score += 10 * matches.length;
     });
     
     updateUI();
@@ -326,6 +327,13 @@ function removeMatchesAndDrop(matches) {
             // 检查游戏是否结束
             if (gameState.moves <= 0) {
                 setTimeout(endGame, 500);
+            } else {
+                // 生成新的匹配机会
+                setTimeout(() => {
+                    if (!hasPossibleMoves()) {
+                        resetBoard();
+                    }
+                }, 300);
             }
         }
     }, 300);
@@ -358,6 +366,84 @@ function endGame() {
     } else {
         alert(`游戏结束！最终得分: ${gameState.score}。继续努力哦！`);
     }
+}
+
+// 检查是否有可行的移动
+function hasPossibleMoves() {
+    // 检查水平方向
+    for (let row = 0; row < config.rows; row++) {
+        for (let col = 0; col < config.cols - 1; col++) {
+            // 交换相邻糖果
+            const temp = gameState.board[row][col].type;
+            gameState.board[row][col].type = gameState.board[row][col + 1].type;
+            gameState.board[row][col + 1].type = temp;
+            
+            // 检查是否有匹配
+            if (findMatches().length > 0) {
+                // 还原交换
+                gameState.board[row][col + 1].type = gameState.board[row][col].type;
+                gameState.board[row][col].type = temp;
+                return true;
+            }
+            
+            // 还原交换
+            gameState.board[row][col + 1].type = gameState.board[row][col].type;
+            gameState.board[row][col].type = temp;
+        }
+    }
+    
+    // 检查垂直方向
+    for (let col = 0; col < config.cols; col++) {
+        for (let row = 0; row < config.rows - 1; row++) {
+            // 交换相邻糖果
+            const temp = gameState.board[row][col].type;
+            gameState.board[row][col].type = gameState.board[row + 1][col].type;
+            gameState.board[row + 1][col].type = temp;
+            
+            // 检查是否有匹配
+            if (findMatches().length > 0) {
+                // 还原交换
+                gameState.board[row + 1][col].type = gameState.board[row][col].type;
+                gameState.board[row][col].type = temp;
+                return true;
+            }
+            
+            // 还原交换
+            gameState.board[row + 1][col].type = gameState.board[row][col].type;
+            gameState.board[row][col].type = temp;
+        }
+    }
+    
+    return false;
+}
+
+// 重置游戏板
+function resetBoard() {
+    for (let row = 0; row < config.rows; row++) {
+        for (let col = 0; col < config.cols; col++) {
+            const candy = gameState.board[row][col];
+            candy.type = getRandomCandyType();
+            updateCandyDisplay(candy);
+        }
+    }
+    
+    // 确保没有初始匹配
+    let matches;
+    do {
+        matches = findMatches();
+        if (matches.length > 0) {
+            matches.forEach(candy => {
+                candy.type = getRandomCandyType();
+            });
+        }
+    } while (matches.length > 0);
+    
+    renderBoard();
+    
+    // 延迟一小段时间再允许处理
+    setTimeout(() => {
+        gameState.isProcessing = false;
+    }, 500);
 }
 
 // 启动游戏
