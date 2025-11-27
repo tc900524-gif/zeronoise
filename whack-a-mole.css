@@ -1,0 +1,140 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #87CEEB, #98FB98);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.game-container {
+    text-align: center;
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    max-width: 600px;
+}
+
+h1 {
+    color: #2E8B57;
+    margin-top: 0;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.mole-hole {
+    width: 100px;
+    height: 100px;
+    background-color: #8B4513;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.mole-hole::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #5D4037;
+    border-radius: 50%;
+    top: 10px;
+}
+
+.mole {
+    position: absolute;
+    width: 80%;
+    height: 60%;
+    background-color: #A0522D;
+    border-radius: 50%;
+    bottom: -60%;
+    left: 10%;
+    transition: bottom 0.3s ease;
+    cursor: pointer;
+}
+
+.mole.up {
+    bottom: 20%;
+}
+
+.mole-img {
+    width: 70%;
+    height: 70%;
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="40" r="20" fill="%23663300"/><circle cx="35" cy="35" r="3" fill="black"/><circle cx="65" cy="35" r="3" fill="black"/><path d="M40,55 Q50,65 60,55" stroke="black" stroke-width="2" fill="none"/></svg>') no-repeat center center;
+    background-size: contain;
+}
+
+.game-controls {
+    margin: 20px 0;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 5px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.game-over {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    text-align: center;
+    z-index: 100;
+}
+
+.game-over h2 {
+    color: #e74c3c;
+    margin-top: 0;
+}
+
+@media (max-width: 500px) {
+    .game-board {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .mole-hole {
+        width: 80px;
+        height: 80px;
+    }
+}
