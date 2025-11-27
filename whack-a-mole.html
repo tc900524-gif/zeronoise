@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打地鼠游戏</title>
+    <link rel="stylesheet" href="whack-a-mole.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>打地鼠游戏</h1>
+        <div class="game-info">
+            <div class="score">得分: <span id="score">0</span></div>
+            <div class="timer">时间: <span id="time">30</span>s</div>
+            <div class="moles-hit">打中: <span id="moles-hit">0</span></div>
+        </div>
+        <div class="game-board" id="game-board">
+            <!-- 游戏格子将通过JavaScript生成 -->
+        </div>
+        <div class="controls">
+            <button id="start-btn">开始游戏</button>
+            <button id="pause-btn">暂停</button>
+        </div>
+        <div class="game-over" id="game-over" style="display: none;">
+            <h2>游戏结束!</h2>
+            <p>最终得分: <span id="final-score">0</span></p>
+            <button id="restart-btn">重新开始</button>
+        </div>
+    </div>
+    <script src="whack-a-mole.js"></script>
+</body>
+</html>
